@@ -8,13 +8,6 @@ export interface CarbonParameters {
     language?: Languages
 }
 
-export interface CarbonAPIParameters {
-    code: string;
-    background?: string;
-    theme?: Themes;
-    language?: Languages
-}
-
 export interface CarbonCLIParameters {
     [x: string]: unknown,
     f: string,

@@ -1,13 +1,12 @@
 import puppeteer from "puppeteer";
 import { SCREENSHOTS_PATH } from "../constants/paths";
 import { CarbonParameters } from "../types/carbon.types";
-import { DefaultTheme } from "../constants/themes.enum";
+import { DefaultTheme } from "../types/themes.enum";
 
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
     private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
-
-    private static CARBON_DEFAULT_BACKGROUND: string = 'rgba(171, 184, 195, 1)';
+    
     private static CARBON_DEFAULT_THEME: string = DefaultTheme;
 
     constructor() {
@@ -25,7 +24,6 @@ abstract class CarbonController<T> {
 
     private convertParamsToQuery(params: CarbonParameters): string {
         const paramsMap: Map<string, string> = new Map();
-        paramsMap.set('bg', params.background || CarbonController.CARBON_DEFAULT_BACKGROUND);
         paramsMap.set('t', params.theme || CarbonController.CARBON_DEFAULT_THEME);
         paramsMap.set('l', params.language);
         paramsMap.set('code', params.code);

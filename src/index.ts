@@ -1,15 +1,12 @@
 import yargs = require('yargs')
 import CarbonCLIController from './cli/controllers/CarbonCLIController';
 import { CarbonCLIParameters } from './types/carbon.types';
+import { DefaultTheme, ThemesList } from './types/themes.enum';
 
 const argv: CarbonCLIParameters = yargs.options({
     f: { type: 'string', default: null, alias: 'file' },
-    c: { type: 'string', default: null, alias: 'background' },
-    t: { type: 'string', default: null, alias: 'theme' },
+    t: { type: 'string', default: DefaultTheme, alias: 'theme', choices: ThemesList },
 }).argv;
 
-let controller: CarbonCLIController;
-if (argv.f) {
-    controller = new CarbonCLIController();
-    controller.getScreenshot(argv);
-}
+let controller = new CarbonCLIController();
+controller.getScreenshot(argv);

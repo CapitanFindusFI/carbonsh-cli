@@ -1,6 +1,6 @@
 import path from "path";
 import { readFileSync } from "fs";
-import { Extensions, Languages, LanguagesExtensions } from "../constants/languages.enum";
+import { ExtensionLanguages, Language } from "../types/languages.enum";
 
 class FileUtils {
     public static getFileContents(filepath: string): string {
@@ -11,8 +11,8 @@ class FileUtils {
         return path.extname(filepath);
     }
 
-    public static getLanguageByExtension(fileExtension: string): Languages {
-        return LanguagesExtensions.get(<Extensions>fileExtension);
+    public static getLanguageByExtension(fileExtension: string): Language {
+        return ExtensionLanguages.get(fileExtension);
     }
 }
 

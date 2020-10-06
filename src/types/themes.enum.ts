@@ -59,7 +59,7 @@ ThemeValues.set('VSCode', 'vscode');
 ThemeValues.set('Yeti', 'yeti');
 ThemeValues.set('Zenburn', 'zenburn');
 
-const ThemesList: ReadonlyArray<string> = Array.from(ThemeValues.values());
+const ThemesList: string[] = Array.from(ThemeValues.values());
 
 const DefaultTheme: string = ThemeValues.get("Seti");
 

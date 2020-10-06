@@ -6,7 +6,7 @@ ExtensionLanguages.set('.ts', 'TypeScript');
 ExtensionLanguages.set('.java', 'Java');
 ExtensionLanguages.set('.php', 'PHP');
 
-const LanguagesList: ReadonlyArray<Language> = Array.from(ExtensionLanguages.values());
+const LanguagesList: Language[] = Array.from(ExtensionLanguages.values());
 
 export {
     Language,

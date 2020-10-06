@@ -1,12 +1,31 @@
-import yargs = require('yargs')
+import { fstat } from "fs";
+import path from "path";
+import yargs from "yargs";
+import fs from "fs";
 import CarbonCLIController from './cli/controllers/CarbonCLIController';
-import { CarbonCLIParameters } from './types/carbon.types';
 import { DefaultTheme, ThemesList } from './types/themes.enum';
 
-const argv: CarbonCLIParameters = yargs.options({
-    f: { type: 'string', default: null, alias: 'file' },
-    t: { type: 'string', default: DefaultTheme, alias: 'theme', choices: ThemesList },
+const args = yargs.option('f', {
+    alias: 'file',
+    describe: 'The path of the file to generate code with'
+}).option('t', {
+    alias: 'theme',
+    describe: 'The carbon.now.sh theme to use, defaults to "seti"',
+    default: DefaultTheme,
+    choices: ThemesList
 }).argv;
 
+const SCREENSHOTS_FOLDER = path.join('screenshots');
+try {
+    fs.mkdirSync(SCREENSHOTS_FOLDER);
+} catch (e) {
+
+}
+
 let controller = new CarbonCLIController();
-controller.getScreenshot(argv);
+try {
+    controller.getScreenshot(args);
+} catch (e) {
+    console.error(e)
+    process.exit(-1)
+}

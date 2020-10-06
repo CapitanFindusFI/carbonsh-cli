@@ -10,6 +10,6 @@ export interface CarbonParameters {
 
 export interface CarbonCLIParameters {
     [x: string]: unknown,
-    f: string,
+    f?: string,
     t?: string
 };

@@ -1,12 +1,12 @@
+import path from "path";
 import puppeteer from "puppeteer";
-import { SCREENSHOTS_PATH } from "../constants/paths";
 import { CarbonParameters } from "../types/carbon.types";
 import { DefaultTheme } from "../types/themes.enum";
 
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
     private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
-    
+
     private static CARBON_DEFAULT_THEME: string = DefaultTheme;
 
     constructor() {
@@ -49,9 +49,14 @@ abstract class CarbonController<T> {
         await page.goto(carbonFullPath);
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
         if (targetElement) {
-            await targetElement.screenshot({
-                path: `${SCREENSHOTS_PATH}/${this.getFileName()}`
-            })
+            try {
+                const OUTPUT_PATH = path.join('screenshots', this.getFileName());
+                await targetElement.screenshot({
+                    path: OUTPUT_PATH
+                });
+            } catch (e) {
+                throw e
+            }
         } else {
             // TODO something happened
         }

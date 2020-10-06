@@ -1,3 +1,5 @@
+import { string } from "yargs";
+import path from "path";
 import CarbonController from "../../controller/CarbonController";
 import { CarbonCLIParameters, CarbonParameters } from "../../types/carbon.types";
 import { Theme } from "../../types/themes.enum";
@@ -10,7 +12,8 @@ class CarbonCLIController extends CarbonController<CarbonCLIParameters> {
         return {
             code: FileUtils.getFileContents(params.f),
             language: FileUtils.getLanguageByExtension(fileExtension),
-            theme: <Theme>params.t
+            theme: <Theme>params.t,
+            output: path.join(params.o)
         }
     }
 }

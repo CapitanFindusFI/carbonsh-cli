@@ -13,6 +13,10 @@ const args = yargs.option('f', {
     describe: 'The carbon.now.sh theme to use, defaults to "seti"',
     default: DefaultTheme,
     choices: ThemesList
+}).option('o',{
+    alias: 'output',
+    describe: 'The path where to save the image from Carbon.now.sh',
+    default: 'screenshots'
 }).argv;
 
 const SCREENSHOTS_FOLDER = path.join('screenshots');

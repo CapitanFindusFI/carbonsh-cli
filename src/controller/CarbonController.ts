@@ -2,6 +2,7 @@ import path from "path";
 import puppeteer from "puppeteer";
 import { CarbonParameters } from "../types/carbon.types";
 import { DefaultTheme } from "../types/themes.enum";
+import {openSync, closeSync} from "fs"
 
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
@@ -15,7 +16,7 @@ abstract class CarbonController<T> {
 
     private getFileName(): string {
         return [
-            new Date().toISOString(),
+            new Date().toISOString().split(':').join('-'), // colons in file names do not work on windows
             'png'
         ].join('.');
     }
@@ -50,7 +51,10 @@ abstract class CarbonController<T> {
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
         if (targetElement) {
             try {
-                const OUTPUT_PATH = path.join('screenshots', this.getFileName());
+                const ROOT_DIR = "../../screenshots";
+                const OUTPUT_PATH = path.join(__dirname, ROOT_DIR, this.getFileName());
+
+                closeSync(openSync(OUTPUT_PATH, 'a'));
                 await targetElement.screenshot({
                     path: OUTPUT_PATH
                 });

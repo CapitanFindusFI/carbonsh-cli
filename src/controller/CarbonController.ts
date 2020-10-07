@@ -39,7 +39,6 @@ abstract class CarbonController<T> {
     public async getScreenshot(params: T) {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-
         const carbonParsedParameters = this.parseParameters(params);
         const carbonQueryString = this.convertParamsToQuery(carbonParsedParameters);
         const carbonFullPath = [
@@ -50,7 +49,7 @@ abstract class CarbonController<T> {
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
         if (targetElement) {
             try {
-                const OUTPUT_PATH = path.join('screenshots', this.getFileName());
+                const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
                 await targetElement.screenshot({
                     path: OUTPUT_PATH
                 });

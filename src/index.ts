@@ -1,4 +1,3 @@
-import { fstat } from "fs";
 import path from "path";
 import yargs from "yargs";
 import fs from "fs";

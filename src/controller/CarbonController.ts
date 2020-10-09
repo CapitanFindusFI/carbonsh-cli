@@ -1,14 +1,15 @@
+import fs from "fs";
 import path from "path";
 import puppeteer from "puppeteer";
 import { CarbonParameters } from "../types/carbon.types";
 import { DefaultTheme } from "../types/themes.enum";
-import {openSync, closeSync} from "fs"
+import { openSync, closeSync } from "fs"
 
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
     private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
 
-    private static CARBON_DEFAULT_THEME: string = DefaultTheme;
+    public static CARBON_DEFAULT_THEME: string = DefaultTheme;
 
     constructor() {
 
@@ -25,7 +26,7 @@ abstract class CarbonController<T> {
 
     private convertParamsToQuery(params: CarbonParameters): string {
         const paramsMap: Map<string, string> = new Map();
-        paramsMap.set('t', params.theme || CarbonController.CARBON_DEFAULT_THEME);
+        paramsMap.set('t', params.theme);
         paramsMap.set('l', params.language);
         paramsMap.set('code', params.code);
 
@@ -38,9 +39,19 @@ abstract class CarbonController<T> {
     }
 
     public async getScreenshot(params: T) {
+        const carbonParsedParameters = this.parseParameters(params);
+
+        try {
+            if (!fs.existsSync(carbonParsedParameters.output)) {
+                fs.mkdirSync(carbonParsedParameters.output);
+            }
+        } catch (e) {
+            throw e
+        }
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-        const carbonParsedParameters = this.parseParameters(params);
+
         const carbonQueryString = this.convertParamsToQuery(carbonParsedParameters);
         const carbonFullPath = [
             CarbonController.CARBON_BASE_PATH, carbonQueryString
@@ -50,8 +61,7 @@ abstract class CarbonController<T> {
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
         if (targetElement) {
             try {
-                const ROOT_DIR = "../../screenshots";
-                const OUTPUT_PATH = path.join(__dirname, ROOT_DIR, this.getFileName());
+                const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
 
                 closeSync(openSync(OUTPUT_PATH, 'a'));
                 await targetElement.screenshot({

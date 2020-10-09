@@ -16,17 +16,17 @@ class FileUtils {
         return ExtensionLanguages.get(fileExtension);
     }
 
-    public static traverseDirectoryAndReturnListOfFiles(rootDirPath : string) : string[] {
+    public static traverseDirectoryAndReturnListOfFiles(rootDirPath: string): string[] {
         var directoriesToProcess = new Queue<string>();
-        var files:string[] = [];
+        var files: string[] = [];
         directoriesToProcess.enqueue(rootDirPath);
-        while(!directoriesToProcess.isEmpty()) {
+        while (!directoriesToProcess.isEmpty()) {
             // get all directories under current directory
-            let currentDir : string = directoriesToProcess.dequeue();
-            var paths:string[] = readdirSync(currentDir);
-            paths.forEach(function(elemPath) {
-                var fullElemPath:string = path.join(currentDir, elemPath);
-                if(lstatSync(fullElemPath).isDirectory()) {
+            let currentDir: string = directoriesToProcess.dequeue();
+            var paths: string[] = readdirSync(currentDir);
+            paths.forEach(function (elemPath) {
+                var fullElemPath: string = path.join(currentDir, elemPath);
+                if (lstatSync(fullElemPath).isDirectory()) {
                     directoriesToProcess.enqueue(fullElemPath);
                 } else {
                     files.push(fullElemPath);

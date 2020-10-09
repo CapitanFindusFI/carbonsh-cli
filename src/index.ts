@@ -16,7 +16,7 @@ const args = yargs.option('f', {
 }).option('d', {
     alias: 'dir',
     describe: 'Path to a directory that has code files'
-}).option('o',{
+}).option('o', {
     alias: 'output',
     describe: 'The path where to save the image from Carbon.now.sh',
     default: 'screenshots'
@@ -28,19 +28,12 @@ if (args.file && args.dir) {
     process.exit(1);
 }
 
-const SCREENSHOTS_FOLDER = path.join('screenshots');
-try {
-    fs.mkdirSync(SCREENSHOTS_FOLDER);
-} catch (e) {
-
-}
-
 let controller = new CarbonCLIController();
 try {
     if (args.dir) {
-        var files:string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.dir);
+        var files: string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.dir);
         files.forEach((f) => {
-            controller.getScreenshot({f});
+            controller.getScreenshot({ o: args.o, f });
         });
     } else {
         controller.getScreenshot(args);

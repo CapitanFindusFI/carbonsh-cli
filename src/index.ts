@@ -33,7 +33,11 @@ try {
     if (args.dir) {
         var files: string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.dir);
         files.forEach((f) => {
-            controller.getScreenshot({ o: args.o, f });
+            controller.getScreenshot({
+                t: args.t,
+                o: args.o,
+                f
+            });
         });
     } else {
         controller.getScreenshot(args);

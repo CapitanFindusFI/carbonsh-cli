@@ -16,6 +16,10 @@ const args = yargs.option('f', {
 }).option('d', {
     alias: 'dir',
     describe: 'Path to a directory that has code files'
+}).option('o',{
+    alias: 'output',
+    describe: 'The path where to save the image from Carbon.now.sh',
+    default: 'screenshots'
 }).argv;
 
 // should not have both file and dir arguments

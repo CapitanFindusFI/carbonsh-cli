@@ -40,7 +40,6 @@ abstract class CarbonController<T> {
     public async getScreenshot(params: T) {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-
         const carbonParsedParameters = this.parseParameters(params);
         const carbonQueryString = this.convertParamsToQuery(carbonParsedParameters);
         const carbonFullPath = [

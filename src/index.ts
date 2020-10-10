@@ -39,9 +39,12 @@ try {
                 f
             });
         });
-    } else {
+    } else if(args.file){
         controller.getScreenshot(args);
-    }
+    }else(
+        console.log("Need to pass a file with '-f' or a dir with '-d'\nFor more usage info use '--help'")
+    )
+
 } catch (e) {
     console.error(e)
     process.exit(-1)

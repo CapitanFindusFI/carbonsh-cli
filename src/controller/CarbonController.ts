@@ -4,7 +4,7 @@ import puppeteer from "puppeteer";
 import { CarbonParameters } from "../types/carbon.types";
 import { DefaultTheme } from "../types/themes.enum";
 import { openSync, closeSync } from "fs"
-
+import ora from 'ora'
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
     private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
@@ -39,6 +39,7 @@ abstract class CarbonController<T> {
     }
 
     public async getScreenshot(params: T) {
+        const spinner = ora(`Creating screenshot...`).start();
         const carbonParsedParameters = this.parseParameters(params);
 
         try {
@@ -46,6 +47,7 @@ abstract class CarbonController<T> {
                 fs.mkdirSync(carbonParsedParameters.output);
             }
         } catch (e) {
+            spinner.fail(' Something bad happened')
             throw e
         }
 
@@ -68,11 +70,13 @@ abstract class CarbonController<T> {
                     path: OUTPUT_PATH
                 });
             } catch (e) {
+                spinner.fail(' Something bad happened')
                 throw e
             }
         } else {
             // TODO something happened
         }
+        spinner.succeed(' Done!')
 
         await browser.close();
     }

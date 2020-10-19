@@ -30,7 +30,7 @@ if (args.file && args.dir) {
 
 const generateScreenshots = async (args: CarbonCLIParameters) => {
     let controller = new CarbonCLIController();
-    let promises: Promise<string[]>[] = [];
+    let promises: Promise<string>[] = [];
 
     if (args.d) {
         const filesList: string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.d);
@@ -45,12 +45,13 @@ const generateScreenshots = async (args: CarbonCLIParameters) => {
         throw new Error("Need to pass a file with '-f' or a dir with '-d'\nFor more usage info use '--help'");
     }
 
-    return promises;
+    return Promise.all(promises);
 }
 
+const screenshotPromises = generateScreenshots(args);
+
 const spinner = ora(`Creating screenshot...`).start();
-generateScreenshots(args).then((paths) => {
-    console.log(paths);
+screenshotPromises.then((paths) => {
     spinner.succeed('Your screenshots have been created!');
     process.exit(0);
 }).catch((e) => {

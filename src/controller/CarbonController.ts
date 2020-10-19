@@ -39,7 +39,7 @@ abstract class CarbonController<T> {
         return paramsList.join('&');
     }
 
-    public async getScreenshot(params: T): Promise<string[]> {
+    public async getScreenshot(params: T): Promise<string> {
         const carbonParsedParameters = this.parseParameters(params);
 
         try {
@@ -60,7 +60,7 @@ abstract class CarbonController<T> {
 
         await page.goto(carbonFullPath);
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
-        const screenshotPaths: string[] = [];
+        let screenshotPath: string;
         if (targetElement) {
             try {
                 const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
@@ -70,7 +70,7 @@ abstract class CarbonController<T> {
                     path: OUTPUT_PATH
                 });
 
-                screenshotPaths.push(OUTPUT_PATH);
+                screenshotPath = OUTPUT_PATH;
             } catch (e) {
                 throw e
             }
@@ -80,7 +80,7 @@ abstract class CarbonController<T> {
 
         await browser.close();
 
-        return screenshotPaths;
+        return screenshotPath;
     }
 }
 

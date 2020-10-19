@@ -1,9 +1,9 @@
-import path from "path";
 import yargs from "yargs";
-import fs from "fs";
 import CarbonCLIController from './cli/controllers/CarbonCLIController';
 import { DefaultTheme, ThemesList } from './types/themes.enum';
 import FileUtils from "./utils/FileUtils";
+import ora from 'ora'
+import { CarbonCLIParameters } from "./types/carbon.types";
 
 const args = yargs.option('f', {
     alias: 'file',
@@ -28,24 +28,34 @@ if (args.file && args.dir) {
     process.exit(1);
 }
 
-let controller = new CarbonCLIController();
-try {
-    if (args.dir) {
-        var files: string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.dir);
-        files.forEach((f) => {
-            controller.getScreenshot({
-                t: args.t,
-                o: args.o,
-                f
-            });
-        });
-    } else if(args.file){
-        controller.getScreenshot(args);
-    }else(
-        console.log("Need to pass a file with '-f' or a dir with '-d'\nFor more usage info use '--help'")
-    )
+const generateScreenshots = async (args: CarbonCLIParameters) => {
+    let controller = new CarbonCLIController();
+    let promises: Promise<string>[] = [];
 
-} catch (e) {
-    console.error(e)
-    process.exit(-1)
+    if (args.d) {
+        const filesList: string[] = FileUtils.traverseDirectoryAndReturnListOfFiles(args.d);
+        promises = filesList.map((file: string) => controller.getScreenshot({
+            f: file,
+            t: args.t,
+            o: args.o
+        }));
+    } else if (args.file) {
+        promises.push(controller.getScreenshot(args));
+    } else {
+        throw new Error("Need to pass a file with '-f' or a dir with '-d'\nFor more usage info use '--help'");
+    }
+
+    return Promise.all(promises);
 }
+
+const screenshotPromises = generateScreenshots(args);
+
+const spinner = ora(`Creating screenshot...`).start();
+screenshotPromises.then((paths) => {
+    spinner.succeed('Your screenshots have been created!');
+    process.exit(0);
+}).catch((e) => {
+    console.error(e);
+    spinner.fail('Something bad happened!');
+    process.exit(-1);
+})

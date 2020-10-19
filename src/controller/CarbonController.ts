@@ -4,7 +4,8 @@ import puppeteer from "puppeteer";
 import { CarbonParameters } from "../types/carbon.types";
 import { DefaultTheme } from "../types/themes.enum";
 import { openSync, closeSync } from "fs"
-import ora from 'ora'
+
+
 abstract class CarbonController<T> {
     private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
     private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
@@ -38,8 +39,7 @@ abstract class CarbonController<T> {
         return paramsList.join('&');
     }
 
-    public async getScreenshot(params: T) {
-        const spinner = ora(`Creating screenshot...`).start();
+    public async getScreenshot(params: T): Promise<string[]> {
         const carbonParsedParameters = this.parseParameters(params);
 
         try {
@@ -47,7 +47,6 @@ abstract class CarbonController<T> {
                 fs.mkdirSync(carbonParsedParameters.output);
             }
         } catch (e) {
-            spinner.fail(' Something bad happened')
             throw e
         }
 
@@ -61,6 +60,7 @@ abstract class CarbonController<T> {
 
         await page.goto(carbonFullPath);
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
+        const screenshotPaths: string[] = [];
         if (targetElement) {
             try {
                 const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
@@ -69,16 +69,18 @@ abstract class CarbonController<T> {
                 await targetElement.screenshot({
                     path: OUTPUT_PATH
                 });
+
+                screenshotPaths.push(OUTPUT_PATH);
             } catch (e) {
-                spinner.fail(' Something bad happened')
                 throw e
             }
         } else {
             // TODO something happened
         }
-        spinner.succeed(' Done!')
 
         await browser.close();
+
+        return screenshotPaths;
     }
 }
 

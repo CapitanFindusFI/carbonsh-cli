@@ -1,4 +1,6 @@
 {
+  "name": "carbonsh-cli",
+  "description": "A Node.js CLI useful to create screenshots from carbon.now.sh",
   "scripts": {
     "build-dev": "webpack --config webpack.config.js --mode=development",
     "build": "webpack --config webpack.config.js --mode=production",

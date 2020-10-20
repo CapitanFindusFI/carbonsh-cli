@@ -7,14 +7,10 @@ import { openSync, closeSync } from "fs"
 
 
 abstract class CarbonController<T> {
-    private static CARBON_BASE_PATH: string = 'https://carbon.now.sh/';
-    private static CARBON_HTML_SELECTOR: string = 'div.container-bg';
+    private static CARBON_BASE_PATH = 'https://carbon.now.sh/';
+    private static CARBON_HTML_SELECTOR = 'div.container-bg';
 
     public static CARBON_DEFAULT_THEME: string = DefaultTheme;
-
-    constructor() {
-
-    }
 
     private getFileName(): string {
         return [
@@ -31,8 +27,8 @@ abstract class CarbonController<T> {
         paramsMap.set('l', params.language);
         paramsMap.set('code', params.code);
 
-        let paramsList = []
-        for (let [key, value] of paramsMap.entries()) {
+        const paramsList = []
+        for (const [key, value] of paramsMap.entries()) {
             paramsList.push(`${key}=${encodeURIComponent(value)}`);
         }
 
@@ -42,12 +38,8 @@ abstract class CarbonController<T> {
     public async getScreenshot(params: T): Promise<string> {
         const carbonParsedParameters = this.parseParameters(params);
 
-        try {
-            if (!fs.existsSync(carbonParsedParameters.output)) {
-                fs.mkdirSync(carbonParsedParameters.output);
-            }
-        } catch (e) {
-            throw e
+        if (!fs.existsSync(carbonParsedParameters.output)) {
+            fs.mkdirSync(carbonParsedParameters.output);
         }
 
         const browser = await puppeteer.launch();
@@ -62,18 +54,14 @@ abstract class CarbonController<T> {
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
         let screenshotPath: string;
         if (targetElement) {
-            try {
-                const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
+            const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
 
-                closeSync(openSync(OUTPUT_PATH, 'a'));
-                await targetElement.screenshot({
-                    path: OUTPUT_PATH
-                });
+            closeSync(openSync(OUTPUT_PATH, 'a'));
+            await targetElement.screenshot({
+                path: OUTPUT_PATH
+            });
 
-                screenshotPath = OUTPUT_PATH;
-            } catch (e) {
-                throw e
-            }
+            screenshotPath = OUTPUT_PATH;
         } else {
             // TODO something happened
         }

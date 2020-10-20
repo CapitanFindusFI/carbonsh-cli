@@ -29,7 +29,7 @@ if (args.file && args.dir) {
 }
 
 const generateScreenshots = async (args: CarbonCLIParameters) => {
-    let controller = new CarbonCLIController();
+    const controller = new CarbonCLIController();
     let promises: Promise<string>[] = [];
 
     if (args.d) {
@@ -51,7 +51,7 @@ const generateScreenshots = async (args: CarbonCLIParameters) => {
 const screenshotPromises = generateScreenshots(args);
 
 const spinner = ora(`Creating screenshot...`).start();
-screenshotPromises.then((paths) => {
+screenshotPromises.then(() => {
     spinner.succeed('Your screenshots have been created!');
     process.exit(0);
 }).catch((e) => {

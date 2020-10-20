@@ -17,15 +17,15 @@ class FileUtils {
     }
 
     public static traverseDirectoryAndReturnListOfFiles(rootDirPath: string): string[] {
-        var directoriesToProcess = new Queue<string>();
-        var files: string[] = [];
+        const directoriesToProcess = new Queue<string>();
+        const files: string[] = [];
         directoriesToProcess.enqueue(rootDirPath);
         while (!directoriesToProcess.isEmpty()) {
             // get all directories under current directory
-            let currentDir: string = directoriesToProcess.dequeue();
-            var paths: string[] = readdirSync(currentDir);
+            const currentDir: string = directoriesToProcess.dequeue();
+            const paths: string[] = readdirSync(currentDir);
             paths.forEach(function (elemPath) {
-                var fullElemPath: string = path.join(currentDir, elemPath);
+                const fullElemPath: string = path.join(currentDir, elemPath);
                 if (lstatSync(fullElemPath).isDirectory()) {
                     directoriesToProcess.enqueue(fullElemPath);
                 } else {

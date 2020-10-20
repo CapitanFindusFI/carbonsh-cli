@@ -15,4 +15,4 @@ export interface CarbonCLIParameters {
     t?: string,
     o?: string,
     d?: string
-};
+}

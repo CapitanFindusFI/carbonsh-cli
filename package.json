@@ -1,7 +1,13 @@
 {
   "scripts": {
     "build-dev": "webpack --config webpack.config.js --mode=development",
-    "build-prod": "webpack --config webpack.config.js --mode=production"
+    "build": "webpack --config webpack.config.js --mode=production",
+    "lint": "eslint",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "ora": "^5.1.0",
@@ -14,6 +20,10 @@
     "@types/node": "^14.11.2",
     "@types/puppeteer": "^3.0.2",
     "@types/yargs": "11.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "eslint": "^7.11.0",
+    "prettier": "^2.1.2",
     "ts-loader": "^8.0.4",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",

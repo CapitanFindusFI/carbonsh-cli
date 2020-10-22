@@ -4,7 +4,7 @@
   "scripts": {
     "build-dev": "webpack --config webpack.config.js --mode=development",
     "build": "webpack --config webpack.config.js --mode=production",
-    "lint": "eslint"
+    "lint": "eslint src/** --fix"
   },
   "dependencies": {
     "ora": "^5.1.0",

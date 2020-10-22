@@ -1,25 +1,25 @@
 import yargs from "yargs";
-import CarbonCLIController from './cli/controllers/CarbonCLIController';
-import { DefaultTheme, ThemesList } from './types/themes.enum';
+import ora from "ora"
+import { DefaultTheme, ThemesList } from "./types/themes.enum";
 import FileUtils from "./utils/FileUtils";
-import ora from 'ora'
 import { CarbonCLIParameters } from "./types/carbon.types";
+import CarbonController from "./controller/CarbonController";
 
-const args = yargs.option('f', {
-    alias: 'file',
-    describe: 'The path of the file to generate code with'
-}).option('t', {
-    alias: 'theme',
-    describe: 'The carbon.now.sh theme to use, defaults to "seti"',
+const args = yargs.option("f", {
+    alias: "file",
+    describe: "The path of the file to generate code with"
+}).option("t", {
+    alias: "theme",
+    describe: "The carbon.now.sh theme to use, defaults to \"seti\"",
     default: DefaultTheme,
     choices: ThemesList
-}).option('d', {
-    alias: 'dir',
-    describe: 'Path to a directory that has code files'
-}).option('o', {
-    alias: 'output',
-    describe: 'The path where to save the image from Carbon.now.sh',
-    default: 'screenshots'
+}).option("d", {
+    alias: "dir",
+    describe: "Path to a directory that has code files"
+}).option("o", {
+    alias: "output",
+    describe: "The path where to save the image from Carbon.now.sh",
+    default: "screenshots"
 }).argv;
 
 // should not have both file and dir arguments
@@ -29,7 +29,7 @@ if (args.file && args.dir) {
 }
 
 const generateScreenshots = async (args: CarbonCLIParameters) => {
-    const controller = new CarbonCLIController();
+    const controller = new CarbonController();
     let promises: Promise<string>[] = [];
 
     if (args.d) {
@@ -50,12 +50,12 @@ const generateScreenshots = async (args: CarbonCLIParameters) => {
 
 const screenshotPromises = generateScreenshots(args);
 
-const spinner = ora(`Creating screenshot...`).start();
+const spinner = ora("Creating screenshot...").start();
 screenshotPromises.then(() => {
-    spinner.succeed('Your screenshots have been created!');
+    spinner.succeed("Your screenshots have been created!");
     process.exit(0);
 }).catch((e) => {
     console.error(e);
-    spinner.fail('Something bad happened!');
+    spinner.fail("Something bad happened!");
     process.exit(-1);
 })

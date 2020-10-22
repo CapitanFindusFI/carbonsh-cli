@@ -1,41 +1,52 @@
 import fs from "fs";
 import path from "path";
 import puppeteer from "puppeteer";
-import { CarbonParameters } from "../types/carbon.types";
-import { DefaultTheme } from "../types/themes.enum";
+import { CarbonCLIParameters, CarbonParameters } from "../types/carbon.types";
+import { DefaultTheme, Theme } from "../types/themes.enum";
 import { openSync, closeSync } from "fs"
+import FileUtils from "../utils/FileUtils";
 
 
-abstract class CarbonController<T> {
-    private static CARBON_BASE_PATH = 'https://carbon.now.sh/';
-    private static CARBON_HTML_SELECTOR = 'div.container-bg';
+class CarbonController {
+    private static CLI_DEFAULT_OUTPUT: string = path.resolve("screenshots");
 
-    public static CARBON_DEFAULT_THEME: string = DefaultTheme;
+    private static CARBON_BASE_PATH = "https://carbon.now.sh/";
+    private static CARBON_HTML_SELECTOR = "div.container-bg";
+    private static CARBON_DEFAULT_THEME: string = DefaultTheme;
 
     private getFileName(): string {
         return [
-            new Date().toISOString().split(':').join('-'), // colons in file names do not work on windows
-            'png'
-        ].join('.');
+            new Date().toISOString().split(":").join("-"),
+            "png"
+        ].join(".");
     }
 
-    protected abstract parseParameters(params: T): CarbonParameters;
+    private parseParameters(params: CarbonCLIParameters): CarbonParameters {
+        const fileExtension: string = FileUtils.getFileExtension(params.f);
+
+        return {
+            code: FileUtils.getFileContents(params.f),
+            language: FileUtils.getLanguageByExtension(fileExtension),
+            theme: <Theme>(params.t || CarbonController.CARBON_DEFAULT_THEME),
+            output: params.o || CarbonController.CLI_DEFAULT_OUTPUT
+        }
+    }
 
     private convertParamsToQuery(params: CarbonParameters): string {
         const paramsMap: Map<string, string> = new Map();
-        paramsMap.set('t', params.theme);
-        paramsMap.set('l', params.language);
-        paramsMap.set('code', params.code);
+        paramsMap.set("t", params.theme);
+        paramsMap.set("l", params.language);
+        paramsMap.set("code", params.code);
 
         const paramsList = []
         for (const [key, value] of paramsMap.entries()) {
             paramsList.push(`${key}=${encodeURIComponent(value)}`);
         }
 
-        return paramsList.join('&');
+        return paramsList.join("&");
     }
 
-    public async getScreenshot(params: T): Promise<string> {
+    public async getScreenshot(params: CarbonCLIParameters): Promise<string> {
         const carbonParsedParameters = this.parseParameters(params);
 
         if (!fs.existsSync(carbonParsedParameters.output)) {
@@ -48,7 +59,7 @@ abstract class CarbonController<T> {
         const carbonQueryString = this.convertParamsToQuery(carbonParsedParameters);
         const carbonFullPath = [
             CarbonController.CARBON_BASE_PATH, carbonQueryString
-        ].join('?');
+        ].join("?");
 
         await page.goto(carbonFullPath);
         const targetElement = await page.$(CarbonController.CARBON_HTML_SELECTOR);
@@ -56,14 +67,14 @@ abstract class CarbonController<T> {
         if (targetElement) {
             const OUTPUT_PATH = path.join(carbonParsedParameters.output, this.getFileName());
 
-            closeSync(openSync(OUTPUT_PATH, 'a'));
+            closeSync(openSync(OUTPUT_PATH, "a"));
             await targetElement.screenshot({
                 path: OUTPUT_PATH
             });
 
             screenshotPath = OUTPUT_PATH;
         } else {
-            // TODO something happened
+            throw new Error(`Unable to find ${CarbonController.CARBON_HTML_SELECTOR} while trying to get a screenshot`);
         }
 
         await browser.close();

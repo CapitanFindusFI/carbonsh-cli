@@ -1,7 +1,7 @@
 import path from "path";
 import { readFileSync, readdirSync, lstatSync } from "fs";
 import { ExtensionLanguages, Language } from "../types/languages.enum";
-import Queue from 'queue-fifo';
+import Queue from "queue-fifo";
 
 class FileUtils {
     public static getFileContents(filepath: string): string {
